@@ -11,4 +11,10 @@
     <PackageReference Include="PresentationFramework" Version="4.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="View\" />
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+
 </Project>

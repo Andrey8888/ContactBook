@@ -3,11 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
 using System.Windows.Data;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Media;
 
 namespace HelloApp
 {
@@ -231,32 +227,6 @@ namespace HelloApp
             }
         }
 
-        public class SortDirectionToBrushConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                string sortProperty = parameter as string;
-                if (value is Tuple<string, bool> currentSort && currentSort.Item1 == sortProperty)
-                {
-                    return currentSort.Item2 ? Brushes.Green : Brushes.Red;
-                }
-                return Brushes.Gray;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
-        }
-
-        public class SortPropertyToVisibilityConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                string sortProperty = parameter as string;
-                return value?.ToString() == sortProperty ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
-        }
-
         private object GetPropertyValue(Contact contact, string property)
         {
             return typeof(Contact).GetProperty(property)?.GetValue(contact);
@@ -298,32 +268,4 @@ namespace HelloApp
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
-
-    public class RelayCommand : ICommand
-    {
-        Action<object?> execute;
-        Func<object?, bool>? canExecute;
-
-        public event EventHandler? CanExecuteChanged
-        {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
-        }
-        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
-        {
-            this.execute = execute;
-            this.canExecute = canExecute;
-        }
-        public bool CanExecute(object? parameter)
-        {
-            return canExecute == null || canExecute(parameter);
-        }
-        public void Execute(object? parameter)
-        {
-            execute(parameter);
-        }
-    }
 }
-
-
-

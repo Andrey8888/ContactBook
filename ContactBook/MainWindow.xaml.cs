@@ -11,17 +11,5 @@ namespace HelloApp
             DataContext =
                 new ApplicationViewModel(new DefaultDialogService(), new JsonFileService());
         }
-
-        private void OnHeaderClick(object sender, RoutedEventArgs e)
-        {
-            if (sender is GridViewColumnHeader header && header.Tag != null)
-            {
-                string sortProperty = header.Tag.ToString();
-                if (DataContext is ApplicationViewModel viewModel)
-                {
-                    viewModel.SortContacts(sortProperty); // Вызов метода сортировки
-                }
-            }
-        }
     }
 }

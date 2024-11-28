@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Data;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Media;
 
 namespace HelloApp
 {
@@ -15,6 +19,37 @@ namespace HelloApp
         IDialogService dialogService;
 
         public ObservableCollection<Contact> Contacts { get; set; }
+
+        private string _filterText;
+        public string FilterText
+        {
+            get => _filterText;
+            set
+            {
+                _filterText = value;
+                OnPropertyChanged(nameof(FilterText));
+                ApplyFilter();
+            }
+        }
+
+        public ICollectionView FilteredContacts { get; }
+
+        private void ApplyFilter()
+        {
+            FilteredContacts.Refresh();
+        }
+
+        private bool FilterContacts(object obj)
+        {
+            var contact = obj as Contact;
+            if (contact == null) return false;
+
+            if (string.IsNullOrEmpty(FilterText)) return true;
+
+            return (contact.Surname != null && contact.Surname.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                   (contact.Name != null && contact.Name.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                   (contact.Patronymic != null && contact.Patronymic.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0);
+        }
 
         private RelayCommand saveCommand;
         public RelayCommand SaveCommand
@@ -122,9 +157,6 @@ namespace HelloApp
             }
         }
 
-        private string currentSortProperty = "Surname";
-        private bool isAscending = true;
-
         private RelayCommand sortCommand;
         public RelayCommand SortCommand
         {
@@ -141,6 +173,22 @@ namespace HelloApp
             }
         }
 
+        private string currentSortProperty;
+        private bool isAscending;
+
+        public (string, bool) SortDirection => (currentSortProperty, isAscending);
+
+        public string CurrentSortProperty
+        {
+            get => currentSortProperty;
+            set
+            {
+                currentSortProperty = value;
+                OnPropertyChanged(nameof(CurrentSortProperty));
+                OnPropertyChanged(nameof(SortDirection));
+            }
+        }
+
         public void SortContacts(string property)
         {
             if (property == currentSortProperty)
@@ -149,7 +197,7 @@ namespace HelloApp
             }
             else
             {
-                currentSortProperty = property;
+                CurrentSortProperty = property;
                 isAscending = true;
             }
 
@@ -162,6 +210,32 @@ namespace HelloApp
             {
                 Contacts.Add(contact);
             }
+        }
+
+        public class SortDirectionToBrushConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                string sortProperty = parameter as string;
+                if (value is Tuple<string, bool> currentSort && currentSort.Item1 == sortProperty)
+                {
+                    return currentSort.Item2 ? Brushes.Green : Brushes.Red;
+                }
+                return Brushes.Gray;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+        }
+
+        public class SortPropertyToVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                string sortProperty = parameter as string;
+                return value?.ToString() == sortProperty ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
         }
 
         private object GetPropertyValue(Contact contact, string property)
@@ -191,6 +265,9 @@ namespace HelloApp
                 new Contact {Surname="Гаврилов", Name="Сергей", Patronymic="Федерович" },
                 new Contact {Surname="Иванов", Name="Василий", Patronymic="Петрович" }
             };
+
+            FilteredContacts = CollectionViewSource.GetDefaultView(Contacts);
+            FilteredContacts.Filter = FilterContacts;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

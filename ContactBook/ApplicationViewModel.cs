@@ -16,7 +16,6 @@ namespace HelloApp
 
         public ObservableCollection<Contact> Contacts { get; set; }
 
-        // команда сохранения файла
         private RelayCommand saveCommand;
         public RelayCommand SaveCommand
         {
@@ -41,7 +40,6 @@ namespace HelloApp
             }
         }
 
-        // команда открытия файла
         private RelayCommand openCommand;
         public RelayCommand OpenCommand
         {
@@ -69,7 +67,6 @@ namespace HelloApp
             }
         }
 
-        // команда добавления нового объекта
         private RelayCommand addCommand;
         public RelayCommand AddCommand
         {
@@ -125,6 +122,53 @@ namespace HelloApp
             }
         }
 
+        private string currentSortProperty = "Surname";
+        private bool isAscending = true;
+
+        private RelayCommand sortCommand;
+        public RelayCommand SortCommand
+        {
+            get
+            {
+                return sortCommand ?? (sortCommand = new RelayCommand(obj =>
+                {
+                    string property = obj as string;
+                    if (!string.IsNullOrEmpty(property))
+                    {
+                        SortContacts(property);
+                    }
+                }));
+            }
+        }
+
+        public void SortContacts(string property)
+        {
+            if (property == currentSortProperty)
+            {
+                isAscending = !isAscending;
+            }
+            else
+            {
+                currentSortProperty = property;
+                isAscending = true;
+            }
+
+            var sortedContacts = isAscending
+                ? Contacts.OrderBy(c => GetPropertyValue(c, property)).ToList()
+                : Contacts.OrderByDescending(c => GetPropertyValue(c, property)).ToList();
+
+            Contacts.Clear();
+            foreach (var contact in sortedContacts)
+            {
+                Contacts.Add(contact);
+            }
+        }
+
+        private object GetPropertyValue(Contact contact, string property)
+        {
+            return typeof(Contact).GetProperty(property)?.GetValue(contact);
+        }
+
         public Contact SelectedContact
         {
             get { return selectedContact; }
@@ -140,7 +184,6 @@ namespace HelloApp
             this.dialogService = dialogService;
             this.fileService = fileService;
 
-            // данные по умлолчанию
             Contacts = new ObservableCollection<Contact>
             {
                 new Contact {Surname="Петренко", Name="Илья", Patronymic="Алексеевич" },

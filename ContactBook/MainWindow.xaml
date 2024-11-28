@@ -35,31 +35,42 @@
             </MenuItem>
         </Menu>
         <ListView Grid.Column="0" ItemsSource="{Binding Contacts}"
-          SelectedItem="{Binding SelectedContact}" Grid.ColumnSpan="2" Margin="0,0,233,51" Grid.RowSpan="2" Grid.Row="1">
-            <ListView.Resources>
-                <Style TargetType="GridViewColumnHeader">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="Background" Value="LightGray" />
-                    <Setter Property="FontWeight" Value="Bold" />
-                    <Setter Property="Padding" Value="5" />
-                </Style>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                    <Setter Property="Padding" Value="5" />
-                    <Setter Property="Background" Value="White" />
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="LightBlue" />
-                            <Setter Property="Foreground" Value="Black" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.Resources>
+          SelectedItem="{Binding SelectedContact}" 
+          Grid.ColumnSpan="2" Margin="0,0,233,51" Grid.RowSpan="2" Grid.Row="1">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Фамилия" DisplayMemberBinding="{Binding Surname}" />
-                    <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Отчество" DisplayMemberBinding="{Binding Patronymic}" />
+                    <GridViewColumn Header="Фамилия">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Content="Фамилия" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Surname" />
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.DisplayMemberBinding>
+                            <Binding Path="Surname" />
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Имя">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Content="Имя" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Name" />
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.DisplayMemberBinding>
+                            <Binding Path="Name" />
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Отчество">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Content="Отчество" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Patronymic" />
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.DisplayMemberBinding>
+                            <Binding Path="Patronymic" />
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>

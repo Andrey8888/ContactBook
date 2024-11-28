@@ -39,7 +39,10 @@
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="5">
             <TextBlock Text="Фильтр: " VerticalAlignment="Center" />
-            <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Width="200" />
+            <ComboBox Width="120" 
+              SelectedItem="{Binding SelectedFilterProperty}" 
+              ItemsSource="{Binding FilterProperties}" />
+            <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="5,0,0,0" />
         </StackPanel>
 
         <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{Binding FilteredContacts}"

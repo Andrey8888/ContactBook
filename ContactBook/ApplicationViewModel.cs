@@ -20,7 +20,24 @@ namespace HelloApp
 
         public ObservableCollection<Contact> Contacts { get; set; }
 
+        private string _selectedFilterProperty;
         private string _filterText;
+
+        public ObservableCollection<string> FilterProperties { get; set; } = new ObservableCollection<string>
+        {
+            "Surname", "Name", "Patronymic"
+        };
+        public string SelectedFilterProperty
+        {
+            get => _selectedFilterProperty;
+            set
+            {
+                _selectedFilterProperty = value;
+                OnPropertyChanged(nameof(SelectedFilterProperty));
+                ApplyFilter();
+            }
+        }
+
         public string FilterText
         {
             get => _filterText;
@@ -46,9 +63,11 @@ namespace HelloApp
 
             if (string.IsNullOrEmpty(FilterText)) return true;
 
-            return (contact.Surname != null && contact.Surname.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                   (contact.Name != null && contact.Name.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0) ||
-                   (contact.Patronymic != null && contact.Patronymic.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0);
+            var property = typeof(Contact).GetProperty(SelectedFilterProperty);
+            if (property == null) return false;
+
+            var value = property.GetValue(contact)?.ToString();
+            return value != null && value.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private RelayCommand saveCommand;
@@ -268,6 +287,8 @@ namespace HelloApp
 
             FilteredContacts = CollectionViewSource.GetDefaultView(Contacts);
             FilteredContacts.Filter = FilterContacts;
+
+            SelectedFilterProperty = "Surname";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

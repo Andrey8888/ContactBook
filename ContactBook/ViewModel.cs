@@ -4,20 +4,91 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace HelloApp
+namespace ContactsBook
 {
-    public class ApplicationViewModel : INotifyPropertyChanged
+    public class ViewModel : INotifyPropertyChanged
     {
-        Contact selectedContact;
+        private Contact selectedContact;
 
-        IFileService fileService;
-        IDialogService dialogService;
+        private IFileService fileService;
+        private IDialogService dialogService;
 
         public ObservableCollection<Contact> Contacts { get; set; }
 
-        private string _selectedFilterProperty;
-        private string _filterText;
+        private ApplicationContext db = new ApplicationContext();
+
+        private RelayCommand addCommand;
+
+        public RelayCommand AddCommand
+        {
+            get
+            {
+                return addCommand ??
+                  (addCommand = new RelayCommand((o) =>
+                  {
+                      ContactWindow contactWindow = new ContactWindow(new Contact());
+                      if (contactWindow.ShowDialog() == true)
+                      {
+                          Contact contact = contactWindow.Contact;
+                          db.Contacts.Add(contact);
+                          db.SaveChanges();
+                      }
+                  }));
+            }
+        }
+
+        private RelayCommand editCommand;
+        public RelayCommand EditCommand
+        {
+            get
+            {
+                return editCommand ??
+                  (editCommand = new RelayCommand((selectedItem) =>
+                  {
+                      Contact? contact = selectedItem as Contact;
+                      if (contact == null) return;
+
+                      Contact vm = new Contact
+                      {
+                          Id = contact.Id,
+                          Surname = contact.Surname,
+                          Name = contact.Name,
+                          Patronymic = contact.Patronymic
+                      };
+                      ContactWindow contactWindow = new ContactWindow(vm);
+
+                      if (contactWindow.ShowDialog() == true)
+                      {
+                          contact.Surname = contactWindow.Contact.Surname;
+                          contact.Name = contactWindow.Contact.Name;
+                          contact.Patronymic = contactWindow.Contact.Patronymic;
+                          db.Entry(contact).State = EntityState.Modified;
+                          db.SaveChanges();
+                      }
+                  }));
+            }
+        }
+
+        private RelayCommand deleteCommand;
+        public RelayCommand DeleteCommand
+        {
+            get
+            {
+                return deleteCommand ??
+                  (deleteCommand = new RelayCommand((selectedItem) =>
+                  {
+                      Contact? contact = selectedItem as Contact;
+                      if (contact == null) return;
+                      db.Contacts.Remove(contact);
+                      db.SaveChanges();
+                  }));
+            }
+        }
+
+        private string selectedFilterProperty;
+        private string filterText;
 
         public ObservableCollection<string> FilterProperties { get; set; } = new ObservableCollection<string>
         {
@@ -25,10 +96,10 @@ namespace HelloApp
         };
         public string SelectedFilterProperty
         {
-            get => _selectedFilterProperty;
+            get => selectedFilterProperty;
             set
             {
-                _selectedFilterProperty = value;
+                selectedFilterProperty = value;
                 OnPropertyChanged(nameof(SelectedFilterProperty));
                 ApplyFilter();
             }
@@ -36,10 +107,10 @@ namespace HelloApp
 
         public string FilterText
         {
-            get => _filterText;
+            get => filterText;
             set
             {
-                _filterText = value;
+                filterText = value;
                 OnPropertyChanged(nameof(FilterText));
                 ApplyFilter();
             }
@@ -117,60 +188,28 @@ namespace HelloApp
             }
         }
 
-        private RelayCommand addCommand;
-        public RelayCommand AddCommand
-        {
-            get
-            {
-                return addCommand ??
-                  (addCommand = new RelayCommand(obj =>
-                  {
-                      Contact contact = new Contact();
-                      Contacts.Insert(0, contact);
-                      SelectedContact = contact;
-                  }));
-            }
-        }
-
-        private RelayCommand removeCommand;
-        public RelayCommand RemoveCommand
-        {
-            get
-            {
-                return removeCommand ??
-                  (removeCommand = new RelayCommand(obj =>
-                  {
-                      Contact contact = obj as Contact;
-                      if (contact != null)
-                      {
-                          Contacts.Remove(contact);
-                      }
-                  },
-                 (obj) => Contacts.Count > 0));
-            }
-        }
-        private RelayCommand doubleCommand;
-        public RelayCommand DoubleCommand
-        {
-            get
-            {
-                return doubleCommand ??
-                  (doubleCommand = new RelayCommand(obj =>
-                  {
-                      Contact contact = obj as Contact;
-                      if (contact != null)
-                      {
-                          Contact contactCopy = new Contact
-                          {
-                              Surname = contact.Surname,
-                              Name = contact.Name,
-                              Patronymic = contact.Patronymic
-                          };
-                          Contacts.Insert(0, contactCopy);
-                      }
-                  }));
-            }
-        }
+        //private RelayCommand copyCommand;
+        //public RelayCommand CopyCommand
+        //{
+        //    get
+        //    {
+        //        return copyCommand ??
+        //          (copyCommand = new RelayCommand(obj =>
+        //          {
+        //              Contact contact = obj as Contact;
+        //              if (contact != null)
+        //              {
+        //                  Contact contactCopy = new Contact
+        //                  {
+        //                      Surname = contact.Surname,
+        //                      Name = contact.Name,
+        //                      Patronymic = contact.Patronymic
+        //                  };
+        //                  Contacts.Insert(0, contactCopy);
+        //              }
+        //          }));
+        //    }
+        //}
 
         private RelayCommand sortCommand;
         public RelayCommand SortCommand
@@ -242,18 +281,15 @@ namespace HelloApp
             }
         }
 
-        public ApplicationViewModel(IDialogService dialogService, IFileService fileService)
+        public ViewModel(IDialogService dialogService, IFileService fileService)
         {
             this.dialogService = dialogService;
             this.fileService = fileService;
 
-            Contacts = new ObservableCollection<Contact>
-            {
-                new Contact {Surname="Петренко", Name="Илья", Patronymic="Алексеевич" },
-                new Contact {Surname="Коробочкин", Name="Илья", Patronymic ="Ильич" },
-                new Contact {Surname="Гаврилов", Name="Сергей", Patronymic="Федерович" },
-                new Contact {Surname="Иванов", Name="Василий", Patronymic="Петрович" }
-            };
+            db.Database.EnsureCreated();
+            db.Contacts.Load();
+
+            Contacts = db.Contacts.Local.ToObservableCollection();
 
             FilteredContacts = CollectionViewSource.GetDefaultView(Contacts);
             FilteredContacts.Filter = FilterContacts;

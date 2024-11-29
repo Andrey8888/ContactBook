@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public class DefaultDialogService : IDialogService
     {

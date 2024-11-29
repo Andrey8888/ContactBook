@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public interface IFileService
     {

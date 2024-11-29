@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public partial class MainWindow : Window
     {
@@ -9,7 +9,7 @@ namespace HelloApp
         {
             InitializeComponent();
             DataContext =
-                new ApplicationViewModel(new DefaultDialogService(), new JsonFileService());
+                new ViewModel(new DefaultDialogService(), new JsonFileService());
         }
     }
 }

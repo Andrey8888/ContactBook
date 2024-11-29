@@ -1,4 +1,4 @@
-﻿<Window x:Class="HelloApp.MainWindow"
+﻿<Window x:Class="ContactsBook.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -45,7 +45,7 @@
             <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="5,0,0,0" />
         </StackPanel>
 
-        <ListView Grid.Row="2" Grid.Column="0" ItemsSource="{Binding FilteredContacts}"
+        <ListView Grid.Row="2" Grid.Column="0" x:Name="usersList" ItemsSource="{Binding FilteredContacts}"
                   SelectedItem="{Binding SelectedContact}" Margin="5">
             <ListView.View>
                 <GridView>
@@ -84,14 +84,14 @@
         </ListView>
 
         <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="5">
-            <Button Command="{Binding AddCommand}">New</Button>
-            <Button Command="{Binding RemoveCommand}"
-                    CommandParameter="{Binding SelectedContact}">Del</Button>
-            <Button Command="{Binding DoubleCommand}"
-                    CommandParameter="{Binding SelectedContact}">Copy</Button>
+            <Button Content="Добавить" Margin="10" Padding="3" Command="{Binding AddCommand}"  />
+            <Button Content="Изменить" Margin="10" Command="{Binding EditCommand}"
+                    CommandParameter="{Binding ElementName=usersList, Path=SelectedItem}"  />
+            <Button Content="Удалить" Margin="10" Command="{Binding DeleteCommand}"
+                    CommandParameter="{Binding ElementName=usersList, Path=SelectedItem}"  />
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.Column="1" DataContext="{Binding SelectedContact}" Margin="5">
+        <!--<StackPanel Grid.Row="2" Grid.Column="1" DataContext="{Binding SelectedContact}" Margin="5">
             <TextBlock Text="Выбранный элемент" FontWeight="Bold" Margin="0,0,0,10" />
             <TextBlock Text="Фамилия" />
             <TextBox Text="{Binding Surname, UpdateSourceTrigger=PropertyChanged}" />
@@ -99,6 +99,6 @@
             <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="Отчество" />
             <TextBox Text="{Binding Patronymic, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </Window>

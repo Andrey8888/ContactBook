@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public class JsonFileService : IFileService
     {

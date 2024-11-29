@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public class RelayCommand : ICommand
     {

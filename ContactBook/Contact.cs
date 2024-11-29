@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace HelloApp
+namespace ContactsBook
 {
     public class Contact : INotifyPropertyChanged
     {
@@ -11,7 +11,7 @@ namespace HelloApp
 
         private Contact contact;
 
-
+        public int Id { get; set; }
         public string Surname
         {
             get { return surname; }

@@ -27,7 +27,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Основная форма -->
         <StackPanel Grid.Row="0" Margin="10">
             <TextBlock Text="Фамилия" />
             <TextBox Text="{Binding Surname}" />
@@ -45,8 +44,7 @@
             <TextBox Text="{Binding PhoneNumber}" />
         </StackPanel>
 
-        <!-- Кнопки -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
             <Button Content="OK" IsDefault="True" Click="Accept_Click" />
             <Button Content="Отмена" IsCancel="True" />
         </StackPanel>

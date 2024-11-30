@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,18 @@ namespace ContactsBook
                       if (contactWindow.ShowDialog() == true)
                       {
                           Contact contact = contactWindow.Contact;
+
+                  if (string.IsNullOrWhiteSpace(contact.Surname) ||
+                          string.IsNullOrWhiteSpace(contact.Name) ||
+                          string.IsNullOrWhiteSpace(contact.Patronymic))
+                          {
+                              System.Windows.MessageBox.Show("Поля 'Фамилия', 'Имя', 'Отчество' и 'Номер телефона' обязательны для заполнения.",
+                                              "Ошибка",
+                                              MessageBoxButton.OK,
+                                              MessageBoxImage.Error);
+                              return;
+                          }
+
                           db.Contacts.Add(contact);
                           db.SaveChanges();
                       }

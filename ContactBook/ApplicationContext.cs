@@ -7,7 +7,7 @@ namespace ContactsBook
         public DbSet<Contact> Contacts { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=contactbook.db");
+            optionsBuilder.UseSqlite("Data Source=contactbook1.db");
         }
     }
 }

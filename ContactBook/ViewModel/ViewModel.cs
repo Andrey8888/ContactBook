@@ -55,7 +55,9 @@ namespace ContactsBook
                           Id = contact.Id,
                           Surname = contact.Surname,
                           Name = contact.Name,
-                          Patronymic = contact.Patronymic
+                          Patronymic = contact.Patronymic,
+                          PlaceOfWork = contact.PlaceOfWork,
+                          PhoneNumber = contact.PhoneNumber
                       };
                       ContactWindow contactWindow = new ContactWindow(vm);
 
@@ -64,6 +66,8 @@ namespace ContactsBook
                           contact.Surname = contactWindow.Contact.Surname;
                           contact.Name = contactWindow.Contact.Name;
                           contact.Patronymic = contactWindow.Contact.Patronymic;
+                          contact.PlaceOfWork = contactWindow.Contact.PlaceOfWork;
+                          contact.PhoneNumber = contactWindow.Contact.PhoneNumber;
                           db.Entry(contact).State = EntityState.Modified;
                           db.SaveChanges();
                       }
@@ -92,7 +96,7 @@ namespace ContactsBook
 
         public ObservableCollection<string> FilterProperties { get; set; } = new ObservableCollection<string>
         {
-            "Surname", "Name", "Patronymic"
+            "Surname", "Name", "Patronymic", "PlaceOfWork", "PhoneNumber"
         };
         public string SelectedFilterProperty
         {

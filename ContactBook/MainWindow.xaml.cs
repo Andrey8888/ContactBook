@@ -11,5 +11,6 @@ namespace ContactsBook
             DataContext =
                 new ViewModel(new DefaultDialogService(), new JsonFileService());
         }
+
     }
 }

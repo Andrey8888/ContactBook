@@ -8,6 +8,8 @@ namespace ContactsBook
         private string surname;
         private string name;
         private string patronymic;
+        private string placeOfWork;
+        private int phoneNumber;
 
         private Contact contact;
 
@@ -37,6 +39,24 @@ namespace ContactsBook
             {
                 patronymic = value;
                 OnPropertyChanged("Patronymic");
+            }
+        }
+        public string PlaceOfWork
+        {
+            get { return placeOfWork; }
+            set
+            {
+                placeOfWork = value;
+                OnPropertyChanged("PlaceOfWork");
+            }
+        }
+        public int PhoneNumber
+        {
+            get { return phoneNumber; }
+            set
+            {
+                phoneNumber = value;
+                OnPropertyChanged("PhoneNumber");
             }
         }
 

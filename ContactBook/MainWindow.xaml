@@ -79,6 +79,26 @@
                             <Binding Path="Patronymic" />
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
+                    <GridViewColumn Header="Место работы">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Content="Место работы" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="PlaceOfWork" />
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.DisplayMemberBinding>
+                            <Binding Path="PlaceOfWork" />
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Номер телефона">
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <Button Content="Номер телефона" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="PhoneNumber" />
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.DisplayMemberBinding>
+                            <Binding Path="PhoneNumber" />
+                        </GridViewColumn.DisplayMemberBinding>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -90,15 +110,5 @@
             <Button Content="Удалить" Margin="10" Command="{Binding DeleteCommand}"
                     CommandParameter="{Binding ElementName=usersList, Path=SelectedItem}"  />
         </StackPanel>
-
-        <!--<StackPanel Grid.Row="2" Grid.Column="1" DataContext="{Binding SelectedContact}" Margin="5">
-            <TextBlock Text="Выбранный элемент" FontWeight="Bold" Margin="0,0,0,10" />
-            <TextBlock Text="Фамилия" />
-            <TextBox Text="{Binding Surname, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="Имя" />
-            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="Отчество" />
-            <TextBox Text="{Binding Patronymic, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>-->
     </Grid>
 </Window>

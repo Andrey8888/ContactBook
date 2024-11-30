@@ -4,42 +4,55 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="UserWindow" Height="200" Width="300">
+        Title="UserWindow" Height="400" Width="350">
     <Window.Resources>
         <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="8" />
+            <Setter Property="Margin" Value="20" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="8" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <Style TargetType="Button">
-            <Setter Property="MinWidth" Value="60" />
+            <Setter Property="MinWidth" Value="140" />
             <Setter Property="Margin" Value="8" />
         </Style>
     </Window.Resources>
-    <Grid>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="9*" />
-            <ColumnDefinition Width="41*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TextBlock Text="Фамилия" Margin="8,8,8,8" />
-        <TextBlock Text="Имя" Grid.Row="1" Margin="8,8,8,8" />
-        <TextBlock Text="Отчество" Grid.Row="2" Margin="8,8,8,8" />
 
-        <TextBox Text="{Binding Surname}" Grid.Column="1" Grid.ColumnSpan="2" Margin="8,8,8,8" />
-        <TextBox Text="{Binding Name}" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="8,8,8,8" />
-        <TextBox Text="{Binding Patronymic}" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" Margin="8,8,8,8" />
+        <TextBlock Text="Фамилия" Grid.Row="0" Grid.Column="0" />
+        <TextBox Text="{Binding Surname}" Grid.Row="0" Grid.Column="1" />
 
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.ColumnSpan="3" Margin="50,0,100,0" Height="46" VerticalAlignment="Center">
-            <Button IsDefault="True" Click="Accept_Click" >OK</Button>
-            <Button IsCancel="True" >Отмена</Button>
+        <TextBlock Text="Имя" Grid.Row="1" Grid.Column="0" />
+        <TextBox Text="{Binding Name}" Grid.Row="1" Grid.Column="1" />
+
+        <TextBlock Text="Отчество" Grid.Row="2" Grid.Column="0" />
+        <TextBox Text="{Binding Patronymic}" Grid.Row="2" Grid.Column="1" />
+
+        <TextBlock Text="Место работы" Grid.Row="3" Grid.Column="0" />
+        <TextBox Text="{Binding PlaceOfWork}" Grid.Row="3" Grid.Column="1" />
+
+        <TextBlock Text="Номер телефона" Grid.Row="4" Grid.Column="0" />
+        <TextBox Text="{Binding PhoneNumber}" Grid.Row="4" Grid.Column="1" />
+
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                    HorizontalAlignment="Center" Margin="0,16,0,0">
+            <Button IsDefault="True" Click="Accept_Click">OK</Button>
+            <Button IsCancel="True">Отмена</Button>
         </StackPanel>
     </Grid>
 </Window>

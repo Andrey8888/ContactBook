@@ -52,10 +52,6 @@ namespace ContactsBook
                             {
                                 dbContext.Contacts.Add(contact);
                                 await dbContext.SaveChangesAsync();
-                            }
-
-                            using (var dbContext = new ApplicationContext())
-                            {
                                 Contacts.Clear();
                                 foreach (var c in dbContext.Contacts)
                                 {
@@ -105,10 +101,7 @@ namespace ContactsBook
 
                                     await dbContext.SaveChangesAsync();
                                 }
-                            }
 
-                    using (var dbContext = new ApplicationContext())
-                            {
                                 Contacts.Clear();
                                 foreach (var c in dbContext.Contacts)
                                 {
@@ -119,7 +112,6 @@ namespace ContactsBook
                     }));
             }
         }
-
 
         private AsyncRelayCommand deleteCommand;
         public AsyncRelayCommand DeleteCommand
@@ -136,10 +128,7 @@ namespace ContactsBook
                         {
                             dbContext.Contacts.Remove(contact);
                             await dbContext.SaveChangesAsync();
-                        }
 
-                using (var dbContext = new ApplicationContext())
-                        {
                             Contacts.Clear();
                             foreach (var c in dbContext.Contacts)
                             {
@@ -149,7 +138,6 @@ namespace ContactsBook
                     }));
             }
         }
-
 
         private string selectedFilterProperty;
         private string filterText;
@@ -206,22 +194,21 @@ namespace ContactsBook
         {
             get
             {
-                return saveCommand ??
-                  (saveCommand = new AsyncRelayCommand(async(obj) =>
-                  {
-                      try
-                      {
-                          if (dialogService.SaveFileDialog() == true)
-                          {
-                              fileService.Save(dialogService.FilePath, Contacts.ToList());
-                              dialogService.ShowMessage("Файл сохранен");
-                          }
-                      }
-                      catch (Exception ex)
-                      {
-                          dialogService.ShowMessage(ex.Message);
-                      }
-                  }));
+                return saveCommand ?? (saveCommand = new AsyncRelayCommand(async (obj) =>
+                {
+                    try
+                    {
+                        if (dialogService.SaveFileDialog() == true)
+                        {
+                            await Task.Run(() => fileService.Save(dialogService.FilePath, Contacts.ToList()));
+                            dialogService.ShowMessage("Файл сохранен");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dialogService.ShowMessage($"Ошибка при сохранении файла: {ex.Message}");
+                    }
+                }));
             }
         }
 
@@ -230,57 +217,47 @@ namespace ContactsBook
         {
             get
             {
-                return openCommand ??
-                  (openCommand = new AsyncRelayCommand(async(bj) =>
-                  {
-                      try
-                      {
-                          if (dialogService.OpenFileDialog() == true)
-                          {
-                              var contacts = fileService.Open(dialogService.FilePath);
-                              Contacts.Clear();
-                              foreach (var p in contacts)
-                                  Contacts.Add(p);
-                              dialogService.ShowMessage("Файл открыт");
-                          }
-                      }
-                      catch (Exception ex)
-                      {
-                          dialogService.ShowMessage(ex.Message);
-                      }
-                  }));
+                return openCommand ?? (openCommand = new AsyncRelayCommand(async (obj) =>
+                {
+                    try
+                    {
+                        if (dialogService.OpenFileDialog() == true)
+                        {
+                            var contacts = await Task.Run(() => fileService.Open(dialogService.FilePath));
+
+                            await App.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                Contacts.Clear();
+                                foreach (var p in contacts)
+                                {
+                                    Contacts.Add(p);
+                                }
+                            });
+
+                            dialogService.ShowMessage("Файл открыт");
+
+                            using (var dbContext = new ApplicationContext())
+                            {
+                                dbContext.Contacts.RemoveRange(dbContext.Contacts);
+                                dbContext.Contacts.AddRange(contacts);
+                                await dbContext.SaveChangesAsync();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        dialogService.ShowMessage($"Ошибка при открытии файла: {ex.Message}");
+                    }
+                }));
             }
         }
-
-        //private AsyncRelayCommand copyCommand;
-        //public AsyncRelayCommand CopyCommand
-        //{
-        //    get
-        //    {
-        //        return copyCommand ??
-        //          (copyCommand = new AsyncRelayCommand(obj =>
-        //          {
-        //              Contact contact = obj as Contact;
-        //              if (contact != null)
-        //              {
-        //                  Contact contactCopy = new Contact
-        //                  {
-        //                      Surname = contact.Surname,
-        //                      Name = contact.Name,
-        //                      Patronymic = contact.Patronymic
-        //                  };
-        //                  Contacts.Insert(0, contactCopy);
-        //              }
-        //          }));
-        //    }
-        //}
 
         private AsyncRelayCommand sortCommand;
         public AsyncRelayCommand SortCommand
         {
             get
             {
-                return sortCommand ?? (sortCommand = new AsyncRelayCommand(async(obj) =>
+                return sortCommand ?? (sortCommand = new AsyncRelayCommand(async (obj) =>
                 {
                     string property = obj as string;
                     if (!string.IsNullOrEmpty(property))

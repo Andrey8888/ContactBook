@@ -9,7 +9,7 @@ namespace ContactsBook
         private string name;
         private string patronymic;
         private string placeOfWork;
-        private int phoneNumber;
+        private string phoneNumber;
 
         private Contact contact;
 
@@ -50,7 +50,7 @@ namespace ContactsBook
                 OnPropertyChanged("PlaceOfWork");
             }
         }
-        public int PhoneNumber
+        public string PhoneNumber
         {
             get { return phoneNumber; }
             set

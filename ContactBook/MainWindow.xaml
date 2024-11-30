@@ -3,8 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ContactsBook"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="550">
     <Window.Resources>
         <Style TargetType="TextBlock">
             <Setter Property="FontSize" Value="14" />
@@ -13,10 +14,12 @@
             <Setter Property="FontSize" Value="14" />
         </Style>
         <Style TargetType="Button">
-            <Setter Property="Width" Value="80" />
+            <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="30" />
             <Setter Property="Margin" Value="5" />
         </Style>
+        <local:SortIndicatorConverter x:Key="SortIndicatorConverter" />
+        <local:ColumnHighlightConverter x:Key="ColumnHighlightConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -52,47 +55,126 @@
                     <GridViewColumn Header="Фамилия">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="Фамилия" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Surname" />
+                                <Button Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                    CommandParameter="Surname"
+                    Background="{Binding DataContext.CurrentSortProperty, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}, 
+                                         Converter={StaticResource ColumnHighlightConverter}, 
+                                         ConverterParameter=Surname}"
+                    BorderThickness="0"
+                    HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Фамилия" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding DataContext.SortDirection, 
+                                              RelativeSource={RelativeSource AncestorType=ListView}, 
+                                              Converter={StaticResource SortIndicatorConverter}, 
+                                              ConverterParameter=Surname}" />
+                                    </StackPanel>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.DisplayMemberBinding>
                             <Binding Path="Surname" />
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
+
                     <GridViewColumn Header="Имя">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="Имя" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Name" />
+                                <Button Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                    CommandParameter="Name"
+                    Background="{Binding DataContext.CurrentSortProperty, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}, 
+                                         Converter={StaticResource ColumnHighlightConverter}, 
+                                         ConverterParameter=Name}"
+                    BorderThickness="0"
+                    HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Имя" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding DataContext.SortDirection, 
+                                              RelativeSource={RelativeSource AncestorType=ListView}, 
+                                              Converter={StaticResource SortIndicatorConverter}, 
+                                              ConverterParameter=Name}" />
+                                    </StackPanel>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.DisplayMemberBinding>
                             <Binding Path="Name" />
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
+
                     <GridViewColumn Header="Отчество">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="Отчество" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="Patronymic" />
+                                <Button Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                    CommandParameter="Patronymic"
+                    Background="{Binding DataContext.CurrentSortProperty, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}, 
+                                         Converter={StaticResource ColumnHighlightConverter}, 
+                                         ConverterParameter=Patronymic}"
+                    BorderThickness="0"
+                    HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Отчество" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding DataContext.SortDirection, 
+                                              RelativeSource={RelativeSource AncestorType=ListView}, 
+                                              Converter={StaticResource SortIndicatorConverter}, 
+                                              ConverterParameter=Patronymic}" />
+                                    </StackPanel>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.DisplayMemberBinding>
                             <Binding Path="Patronymic" />
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
+
                     <GridViewColumn Header="Место работы">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="Место работы" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="PlaceOfWork" />
+                                <Button Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                    CommandParameter="PlaceOfWork"
+                    Background="{Binding DataContext.CurrentSortProperty, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}, 
+                                         Converter={StaticResource ColumnHighlightConverter}, 
+                                         ConverterParameter=PlaceOfWork}"
+                    BorderThickness="0"
+                    HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Место работы" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding DataContext.SortDirection, 
+                                              RelativeSource={RelativeSource AncestorType=ListView}, 
+                                              Converter={StaticResource SortIndicatorConverter}, 
+                                              ConverterParameter=PlaceOfWork}" />
+                                    </StackPanel>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.DisplayMemberBinding>
                             <Binding Path="PlaceOfWork" />
                         </GridViewColumn.DisplayMemberBinding>
                     </GridViewColumn>
+
                     <GridViewColumn Header="Номер телефона">
                         <GridViewColumn.HeaderTemplate>
                             <DataTemplate>
-                                <Button Content="Номер телефона" Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}" CommandParameter="PhoneNumber" />
+                                <Button Command="{Binding DataContext.SortCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+                    CommandParameter="PhoneNumber"
+                    Background="{Binding DataContext.CurrentSortProperty, 
+                                         RelativeSource={RelativeSource AncestorType=ListView}, 
+                                         Converter={StaticResource ColumnHighlightConverter}, 
+                                         ConverterParameter=PhoneNumber}"
+                    BorderThickness="0"
+                    HorizontalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Номер телефона" FontWeight="Bold" />
+                                        <TextBlock Text="{Binding DataContext.SortDirection, 
+                                              RelativeSource={RelativeSource AncestorType=ListView}, 
+                                              Converter={StaticResource SortIndicatorConverter}, 
+                                              ConverterParameter=PhoneNumber}" />
+                                    </StackPanel>
+                                </Button>
                             </DataTemplate>
                         </GridViewColumn.HeaderTemplate>
                         <GridViewColumn.DisplayMemberBinding>

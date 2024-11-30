@@ -11,7 +11,6 @@ C:\Users\888\source\repos\ContactBook\ContactBook\bin\Debug\netcoreapp3.0\Contac
 C:\Users\888\source\repos\ContactBook\ContactBook\bin\Debug\netcoreapp3.0\ContactBook.dll
 C:\Users\888\source\repos\ContactBook\ContactBook\bin\Debug\netcoreapp3.0\ContactBook.pdb
 C:\Users\888\source\repos\ContactBook\ContactBook\bin\Debug\netcoreapp3.0\Microsoft.Xaml.Behaviors.dll
-C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\ContactBook.csprojAssemblyReference.cache
 C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\ContactBook.csproj.CopyComplete
 C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\ContactBook.dll
 C:\Users\888\source\repos\ContactBook\ContactBook\bin\Debug\netcoreapp3.0\Microsoft.Data.Sqlite.dll
@@ -55,3 +54,5 @@ C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\Contac
 C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\MainWindow.baml
 C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\ContactWindow.g.cs
 C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\MainWindow.g.cs
+C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\GeneratedInternalTypeHelper.g.cs
+C:\Users\888\source\repos\ContactBook\ContactBook\obj\Debug\netcoreapp3.0\ContactBook_MarkupCompile.lref

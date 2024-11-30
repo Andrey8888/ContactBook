@@ -234,8 +234,6 @@ namespace ContactsBook
         private string currentSortProperty;
         private bool isAscending;
 
-        public (string, bool) SortDirection => (currentSortProperty, isAscending);
-
         public string CurrentSortProperty
         {
             get => currentSortProperty;
@@ -243,13 +241,14 @@ namespace ContactsBook
             {
                 currentSortProperty = value;
                 OnPropertyChanged(nameof(CurrentSortProperty));
-                OnPropertyChanged(nameof(SortDirection));
             }
         }
 
+        public Tuple<string, bool> SortDirection => Tuple.Create(CurrentSortProperty, isAscending);
+
         public void SortContacts(string property)
         {
-            if (property == currentSortProperty)
+            if (property == CurrentSortProperty)
             {
                 isAscending = !isAscending;
             }
@@ -268,6 +267,8 @@ namespace ContactsBook
             {
                 Contacts.Add(contact);
             }
+
+            OnPropertyChanged(nameof(SortDirection));
         }
 
         private object GetPropertyValue(Contact contact, string property)

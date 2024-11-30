@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using Microsoft.EntityFrameworkCore;
@@ -20,89 +21,135 @@ namespace ContactsBook
 
         private ApplicationContext db = new ApplicationContext();
 
-        private RelayCommand addCommand;
+        private AsyncRelayCommand addCommand;
 
-        public RelayCommand AddCommand
+        public AsyncRelayCommand AddCommand
         {
             get
             {
                 return addCommand ??
-                  (addCommand = new RelayCommand((o) =>
-                  {
-                      ContactWindow contactWindow = new ContactWindow(new Contact());
-                      if (contactWindow.ShowDialog() == true)
-                      {
-                          Contact contact = contactWindow.Contact;
+                    (addCommand = new AsyncRelayCommand(async (o) =>
+                    {
+                        ContactWindow contactWindow = new ContactWindow(new Contact());
+                        if (contactWindow.ShowDialog() == true)
+                        {
+                            Contact contact = contactWindow.Contact;
 
-                  if (string.IsNullOrWhiteSpace(contact.Surname) ||
-                          string.IsNullOrWhiteSpace(contact.Name) ||
-                          string.IsNullOrWhiteSpace(contact.Patronymic))
-                          {
-                              System.Windows.MessageBox.Show("Поля 'Фамилия', 'Имя', 'Отчество' и 'Номер телефона' обязательны для заполнения.",
-                                              "Ошибка",
-                                              MessageBoxButton.OK,
-                                              MessageBoxImage.Error);
-                              return;
-                          }
+                            if (string.IsNullOrWhiteSpace(contact.Surname) ||
+                                string.IsNullOrWhiteSpace(contact.Name) ||
+                                string.IsNullOrWhiteSpace(contact.Patronymic))
+                            {
+                                System.Windows.MessageBox.Show("Поля 'Фамилия', 'Имя', 'Отчество' обязательны для заполнения.",
+                                                               "Ошибка",
+                                                               MessageBoxButton.OK,
+                                                               MessageBoxImage.Error);
+                                return;
+                            }
 
-                          db.Contacts.Add(contact);
-                          db.SaveChanges();
-                      }
-                  }));
+                            await Task.Delay(5000); // имитация задержки при добавление нового контакта 
+
+                            using (var dbContext = new ApplicationContext())
+                            {
+                                dbContext.Contacts.Add(contact);
+                                await dbContext.SaveChangesAsync();
+                            }
+
+                            using (var dbContext = new ApplicationContext())
+                            {
+                                Contacts.Clear();
+                                foreach (var c in dbContext.Contacts)
+                                {
+                                    Contacts.Add(c);
+                                }
+                            }
+                        }
+                    }));
             }
         }
 
-        private RelayCommand editCommand;
-        public RelayCommand EditCommand
+        private AsyncRelayCommand editCommand;
+        public AsyncRelayCommand EditCommand
         {
             get
             {
                 return editCommand ??
-                  (editCommand = new RelayCommand((selectedItem) =>
-                  {
-                      Contact? contact = selectedItem as Contact;
-                      if (contact == null) return;
+                    (editCommand = new AsyncRelayCommand(async (selectedItem) =>
+                    {
+                        Contact? contact = selectedItem as Contact;
+                        if (contact == null) return;
 
-                      Contact vm = new Contact
-                      {
-                          Id = contact.Id,
-                          Surname = contact.Surname,
-                          Name = contact.Name,
-                          Patronymic = contact.Patronymic,
-                          PlaceOfWork = contact.PlaceOfWork,
-                          PhoneNumber = contact.PhoneNumber
-                      };
-                      ContactWindow contactWindow = new ContactWindow(vm);
+                        Contact vm = new Contact
+                        {
+                            Id = contact.Id,
+                            Surname = contact.Surname,
+                            Name = contact.Name,
+                            Patronymic = contact.Patronymic,
+                            PlaceOfWork = contact.PlaceOfWork,
+                            PhoneNumber = contact.PhoneNumber
+                        };
 
-                      if (contactWindow.ShowDialog() == true)
-                      {
-                          contact.Surname = contactWindow.Contact.Surname;
-                          contact.Name = contactWindow.Contact.Name;
-                          contact.Patronymic = contactWindow.Contact.Patronymic;
-                          contact.PlaceOfWork = contactWindow.Contact.PlaceOfWork;
-                          contact.PhoneNumber = contactWindow.Contact.PhoneNumber;
-                          db.Entry(contact).State = EntityState.Modified;
-                          db.SaveChanges();
-                      }
-                  }));
+                        ContactWindow contactWindow = new ContactWindow(vm);
+
+                        if (contactWindow.ShowDialog() == true)
+                        {
+                            using (var dbContext = new ApplicationContext())
+                            {
+                                var contactToUpdate = await dbContext.Contacts.FindAsync(contact.Id);
+                                if (contactToUpdate != null)
+                                {
+                                    contactToUpdate.Surname = contactWindow.Contact.Surname;
+                                    contactToUpdate.Name = contactWindow.Contact.Name;
+                                    contactToUpdate.Patronymic = contactWindow.Contact.Patronymic;
+                                    contactToUpdate.PlaceOfWork = contactWindow.Contact.PlaceOfWork;
+                                    contactToUpdate.PhoneNumber = contactWindow.Contact.PhoneNumber;
+
+                                    await dbContext.SaveChangesAsync();
+                                }
+                            }
+
+                    using (var dbContext = new ApplicationContext())
+                            {
+                                Contacts.Clear();
+                                foreach (var c in dbContext.Contacts)
+                                {
+                                    Contacts.Add(c);
+                                }
+                            }
+                        }
+                    }));
             }
         }
 
-        private RelayCommand deleteCommand;
-        public RelayCommand DeleteCommand
+
+        private AsyncRelayCommand deleteCommand;
+        public AsyncRelayCommand DeleteCommand
         {
             get
             {
                 return deleteCommand ??
-                  (deleteCommand = new RelayCommand((selectedItem) =>
-                  {
-                      Contact? contact = selectedItem as Contact;
-                      if (contact == null) return;
-                      db.Contacts.Remove(contact);
-                      db.SaveChanges();
-                  }));
+                    (deleteCommand = new AsyncRelayCommand(async (selectedItem) =>
+                    {
+                        Contact? contact = selectedItem as Contact;
+                        if (contact == null) return;
+
+                        using (var dbContext = new ApplicationContext())
+                        {
+                            dbContext.Contacts.Remove(contact);
+                            await dbContext.SaveChangesAsync();
+                        }
+
+                using (var dbContext = new ApplicationContext())
+                        {
+                            Contacts.Clear();
+                            foreach (var c in dbContext.Contacts)
+                            {
+                                Contacts.Add(c);
+                            }
+                        }
+                    }));
             }
         }
+
 
         private string selectedFilterProperty;
         private string filterText;
@@ -154,13 +201,13 @@ namespace ContactsBook
             return value != null && value.IndexOf(FilterText, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
-        private RelayCommand saveCommand;
-        public RelayCommand SaveCommand
+        private AsyncRelayCommand saveCommand;
+        public AsyncRelayCommand SaveCommand
         {
             get
             {
                 return saveCommand ??
-                  (saveCommand = new RelayCommand(obj =>
+                  (saveCommand = new AsyncRelayCommand(async(obj) =>
                   {
                       try
                       {
@@ -178,13 +225,13 @@ namespace ContactsBook
             }
         }
 
-        private RelayCommand openCommand;
-        public RelayCommand OpenCommand
+        private AsyncRelayCommand openCommand;
+        public AsyncRelayCommand OpenCommand
         {
             get
             {
                 return openCommand ??
-                  (openCommand = new RelayCommand(obj =>
+                  (openCommand = new AsyncRelayCommand(async(bj) =>
                   {
                       try
                       {
@@ -205,13 +252,13 @@ namespace ContactsBook
             }
         }
 
-        //private RelayCommand copyCommand;
-        //public RelayCommand CopyCommand
+        //private AsyncRelayCommand copyCommand;
+        //public AsyncRelayCommand CopyCommand
         //{
         //    get
         //    {
         //        return copyCommand ??
-        //          (copyCommand = new RelayCommand(obj =>
+        //          (copyCommand = new AsyncRelayCommand(obj =>
         //          {
         //              Contact contact = obj as Contact;
         //              if (contact != null)
@@ -228,12 +275,12 @@ namespace ContactsBook
         //    }
         //}
 
-        private RelayCommand sortCommand;
-        public RelayCommand SortCommand
+        private AsyncRelayCommand sortCommand;
+        public AsyncRelayCommand SortCommand
         {
             get
             {
-                return sortCommand ?? (sortCommand = new RelayCommand(obj =>
+                return sortCommand ?? (sortCommand = new AsyncRelayCommand(async(obj) =>
                 {
                     string property = obj as string;
                     if (!string.IsNullOrEmpty(property))

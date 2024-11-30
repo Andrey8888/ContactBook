@@ -1,30 +1,34 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ContactsBook
 {
-    public class RelayCommand : ICommand
+    public class AsyncRelayCommand : ICommand
     {
-        Action<object?> execute;
-        Func<object?, bool>? canExecute;
+        private readonly Func<object?, Task> executeAsync;
+        private readonly Func<object?, bool>? canExecute;
 
         public event EventHandler? CanExecuteChanged
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
         }
-        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
+
+        public AsyncRelayCommand(Func<object?, Task> executeAsync, Func<object?, bool>? canExecute = null)
         {
-            this.execute = execute;
+            this.executeAsync = executeAsync;
             this.canExecute = canExecute;
         }
+
         public bool CanExecute(object? parameter)
         {
             return canExecute == null || canExecute(parameter);
         }
-        public void Execute(object? parameter)
+
+        public async void Execute(object? parameter)
         {
-            execute(parameter);
+            await executeAsync(parameter);
         }
     }
 }

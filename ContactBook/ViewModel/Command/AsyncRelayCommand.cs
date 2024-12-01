@@ -6,6 +6,7 @@ namespace ContactsBook
 {
     public class AsyncRelayCommand : ICommand
     {
+        protected ViewModel viewModel;
         private readonly Func<object?, Task> executeAsync;
         private readonly Func<object?, bool>? canExecute;
 
